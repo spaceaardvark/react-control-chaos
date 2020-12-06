@@ -1,0 +1,32 @@
+:root {
+  --global-font-size: 13px;
+  --font-stack: "IBM Plex Mono", monospace;
+  --mono-font-stack: "IBM Plex Mono", monospace;
+  --font-color: #333;
+  --global-line-height: 1.7em;
+} 
+
+input[type="email"],
+input[type="text"],
+input[type="number"],
+input[type="password"],
+input[type="search"] { border-color: lightgray; border-radius: 2px; } 
+
+input[readonly],
+textarea[readonly] { background-color: var(--code-bg-color); }
+
+button { text-transform: uppercase; }
+
+button[disabled],
+button[disabled]:hover { cursor: no-drop; background-color: var(--code-bg-color); border-color: var(--code-bg-color); }
+
+h1,h2,h3,h4 { text-transform: uppercase; }
+
+code::after, code::before { content: none; }
+
+label { font-weight: 600; }
+
+i.far, i.fas { color: var(--primary-color); }
+
+.help, .help em { font-size: 10px; margin-bottom: 0; }
+.indented { margin-left: 2em; } 
