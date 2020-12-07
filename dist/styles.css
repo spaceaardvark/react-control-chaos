@@ -27,6 +27,14 @@ code::after, code::before { content: none; }
 
 label { font-weight: 600; }
 
+video { width: 100%; }
+
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+.success { background-color: green; color: white; }
+.info { background-color: goldenrod; color: white; }
+
 i.far, i.fas { color: var(--primary-color); }
 
 .help, .help em { font-size: 10px; margin-bottom: 0; }
@@ -39,14 +47,18 @@ i.far, i.fas { color: var(--primary-color); }
   margin-bottom: calc(var(--global-space) * 2);
 }
 
-.panel, .player {
+.panel, .player, .status {
   border: 1px solid lightgray;
   padding: 1em;
 }
 
-.panel { 
+.player { 
+  grid-column-end: span 2;
 }
 
-.player { 
+.status {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-start: 2;
   grid-column-end: span 2;
 }
