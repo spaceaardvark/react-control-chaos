@@ -1,9 +1,10 @@
 :root {
-  --global-font-size: 13px;
-  --font-stack: "IBM Plex Mono", monospace;
-  --mono-font-stack: "IBM Plex Mono", monospace;
   --font-color: #333;
+  --font-stack: "IBM Plex Mono", monospace;
+  --global-font-size: 13px;
   --global-line-height: 1.7em;
+  --mono-font-stack: "IBM Plex Mono", monospace;
+  --page-width: 70em;
 } 
 
 input[type="email"],
@@ -30,3 +31,22 @@ i.far, i.fas { color: var(--primary-color); }
 
 .help, .help em { font-size: 10px; margin-bottom: 0; }
 .indented { margin-left: 2em; } 
+
+#app { 
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 15em);
+  gap: 1em;
+  margin-bottom: calc(var(--global-space) * 2);
+}
+
+.panel, .player {
+  border: 1px solid lightgray;
+  padding: 1em;
+}
+
+.panel { 
+}
+
+.player { 
+  grid-column-end: span 2;
+}

@@ -1,4 +1,16 @@
 import { html } from "../html";
 
+import { LeftPanel } from "./LeftPanel";
+import { RightPanel } from "./RightPanel";
+import { VideoPlayer } from "./VideoPlayer";
+
+const appReducer = (action, state) => {
+
+};
+
 export const App = () =>
-  html`<h1>Hello, react-control-chaos!</h1>`;
+  html`
+    <${LeftPanel} />
+    <${VideoPlayer} />
+    <${RightPanel} />
+  `;

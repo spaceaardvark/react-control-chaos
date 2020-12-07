@@ -7,8 +7,33 @@
 
   const html = htm.bind(v);
 
+  const LeftPanel = () => 
+    html`
+    <div class="panel left">
+      Left
+    </div>
+  `;
+
+  const RightPanel = () => 
+    html`
+    <div class="panel right">
+      Right
+    </div>
+  `;
+
+  const VideoPlayer = () => 
+    html`
+    <div class="player">
+      Video
+    </div>
+  `;
+
   const App = () =>
-    html`<h1>Hello, react-control-chaos!</h1>`;
+    html`
+    <${LeftPanel} />
+    <${VideoPlayer} />
+    <${RightPanel} />
+  `;
 
   // Fix for packages that are still checking for process.env.NODE_ENV in ES6 module builds
   window.process = { env: { NODE_DEV: "production" } };
