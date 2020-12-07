@@ -9,6 +9,8 @@
 
   const html = htm.bind(v);
 
+  // PASSIVE ACTIONS -- THINGS THAT HAVE HAPPENED
+
   const DURATION_SET = "DURATION_SET";
   const durationSet = (duration) => ({
     type: DURATION_SET,
@@ -43,6 +45,16 @@
     }
   });
 
+  // ACTIVE ACTIONS -- THINGS THAT NEED TO HAPPEN
+
+  const SET_PLAYING = "SET_PLAYING";
+  const setPlaying = (playing) => ({
+    type: SET_PLAYING,
+    payload: {
+      playing
+    }
+  });
+
   const initialState = {
     duration: 0,
     playing: false,
@@ -62,17 +74,29 @@
         return { ...state, playing: false };
       case VOLUME_CHANGED:
         return { ...state, volume: action.payload.volume };
+      default:
+        console.error("Unrecognized action in reducer:", action);
+        return state;
     }
-
-    return state;
   };
 
-  const LeftPanel = () => 
-    html`
+  const LeftPanel = ({ state, dispatch }) => {
+    const onClick = (e) => dispatch(setPlaying(e.target.checked));
+
+    return html`
     <div class="panel left">
-      Left
+      <div class="form-group">
+        <label>
+          <input 
+            type="checkbox"
+            checked=${state.playing ? "checked" : null}
+            onclick=${onClick}
+          /> Playing
+        </label>
+      </div>
     </div>
   `;
+  };
 
   const RightPanel = () => 
     html`

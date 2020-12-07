@@ -1,4 +1,4 @@
-import { useReducer } from "preact/hooks";
+import { useThunkReducer } from "react-hook-thunk-reducer";
 
 import { html } from "../html";
 import { reducer, initialState } from "../reducer";
@@ -9,7 +9,7 @@ import { StatusBar } from "./StatusBar";
 import { VideoPlayer } from "./VideoPlayer";
 
 export const App = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useThunkReducer(reducer, initialState);
 
   return html`
     <${LeftPanel} state=${state} dispatch=${dispatch} />

@@ -21,7 +21,8 @@ export const reducer = (state, action) => {
       return { ...state, playing: false };
     case VOLUME_CHANGED:
       return { ...state, volume: action.payload.volume };
+    default:
+      console.error("Unrecognized action in reducer:", action);
+      return state;
   }
-
-  return state;
 };

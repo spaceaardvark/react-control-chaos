@@ -42,7 +42,7 @@ i.far, i.fas { color: var(--primary-color); }
 
 #app { 
   display: grid;
-  grid-template-columns: repeat(auto-fill, 15em);
+  grid-template-columns: repeat(4, 15em);
   gap: 1em;
   margin-bottom: calc(var(--global-space) * 2);
 }
