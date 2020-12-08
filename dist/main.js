@@ -293,6 +293,10 @@
 	  videoEl.muted = muted;
 	};
 
+	const setPosition = (position) => {
+	  videoEl.currentTime = position;
+	};
+
 	// PASSIVE ACTIONS -- THINGS THAT HAVE HAPPENED
 
 	const DURATION_SET = "DURATION_SET";
@@ -351,6 +355,10 @@
 	  setMuted(muted);
 	};
 
+	const setPosition$1 = (position) => () => {
+	  setPosition(position);
+	};
+
 	const initialState = {
 	  duration: 0,
 	  playing: false,
@@ -390,25 +398,40 @@
 	const HIGH = 0.66;
 
 	const LeftPanel = ({ state, dispatch }) => {
-	  const onPlayingChange = (e) => dispatch(setPlaying(e.target.checked));
-	  const onMuted = (e) => dispatch(setMuted$1(e.target.checked));
 
-	  const range1 = state.volume < MED;
-	  const range2 = state.volume >= MED && state.volume < HIGH;
-	  const range3 = state.volume >= HIGH;
+	  const onPositionChange = (e) => {
+	    const val = Number(e.target.value);
+	    if (!isNaN(val)) {
+	      if (val >= 0 && val <= state.duration) {
+	        dispatch(setPosition$1(val));
+	      }
+	    }
+	  };
+
+	  const range1 = d$1(() => state.volume < MED, [state.volume]);
+	  const range2 = d$1(() => state.volume >= MED && state.volume < HIGH, [state.volume]);
+	  const range3 = d$1(() => state.volume >= HIGH, [state.volume]);
 
 	  return html`
     <div class="panel left">
     
       <div class="form-group">
         <label>
-          <input type="checkbox" checked=${state.playing} onclick=${onPlayingChange} /> Playing
+          <input
+            type="checkbox"
+            checked=${state.playing}
+            onclick=${(e) => dispatch(setPlaying(e.target.checked))}
+          /> Playing
         </label>
       </div>
     
       <div class="form-group">
         <label>
-          <input type="checkbox" checked=${state.muted} onclick=${onMuted} /> Muted
+          <input
+            type="checkbox"
+            checked=${state.muted}
+            onclick=${(e) => dispatch(setMuted$1(e.target.checked))}
+          /> Muted
         </label>
       </div>
 
@@ -437,21 +460,105 @@
         </label>
       </div>
 
+      <div class="form-group">
+        <label for="position">Position</label>
+        <input
+          id="position"
+          type="text"
+          value=${state.position}
+          onchange=${onPositionChange}
+        />
+      </div>
+
     </div>
   `;
 	};
 
 	const RightPanel = ({ state, dispatch }) => {
-	  const onChange = (e) => dispatch(setPlaying(e.target.value === "playing"));
+
+	  const onPlayingChange = (e) => dispatch(setPlaying(e.target.value === "playing"));
+	  const onVolumeChange = (e) => {
+	    const val = Number(e.target.value);
+	    if (!isNaN(val)) {
+	      if (val >= 0 && val <= 1) {
+	        dispatch(setVolume$1());
+	      }
+	    }
+	  };
+
+	  const p25 = d$1(() => Math.floor(state.duration / 4), [state.duration]);
+	  const p50 = d$1(() => Math.floor(state.duration / 2), [state.duration]);
+	  const p75 = d$1(() => Math.floor(3 * state.duration / 4), [state.duration]);
+
+	  const p0to25 = d$1(
+	    () => state.position < p25, 
+	    [state.position, p25]
+	  );
+	  const p25to50 = d$1(
+	    () => state.position >= p25 && state.position < p50, 
+	    [state.position, p25, p50]
+	  );
+	  const p50to75 = d$1(
+	    () => state.position >= p50 && state.position < p75,
+	    [state.position, p50, p75]
+	  );
+	  const p75to100 = d$1(
+	    () => state.position >= p75,
+	    [state.position, p75]
+	  );
 
 	  return html`
     <div class="panel right">
+
       <div class="form-group">
-        <select onchange=${onChange}>
+        <select onchange=${onPlayingChange}>
           <option value="paused" selected=${!state.playing}>Paused</option>
           <option value="playing" selected=${state.playing}>Playing</option>
         </select>
       </div>
+
+      <div class="form-group">
+        <label for="volume">Volume</label>
+        <input
+          id="volume"
+          type="text"
+          value=${state.volume}
+          onchange=${onVolumeChange}
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Position</label><br/>
+        <label>
+          <input
+            type="radio" name="position" value="p0to25"
+            checked=${p0to25}
+            onclick=${() => dispatch(setPosition$1(0))}
+          /> 0-25%
+        </label><br/>
+        <label>
+          <input
+            type="radio" name="position" value="p25to50"
+            checked=${p25to50}
+            onclick=${() => dispatch(setPosition$1(p25))}
+          /> 25-50%
+        </label><br/>
+        <label>
+          <input
+            type="radio" name="position" value="p50to75"
+            checked=${p50to75}
+            onclick=${() => dispatch(setPosition$1(p50))}
+          /> 50-75%
+        </label><br/>
+        <label>
+          <input
+            type="radio" name="position" value="p75to100"
+            checked=${p75to100}
+            onclick=${() => dispatch(setPosition$1(p75))}
+          /> 75-100%
+        </label><br/>
+      </div>
+
     </div>
   `;
 	};

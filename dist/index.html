@@ -32,6 +32,25 @@
     <!-- Everything else -->
     <footer>
 
+      <p>Key elements that make this work:</p>
+
+      <ul>
+        <li>React's <code>useReducer</code> hook to manage state in a central location. It's
+          actually <a href="https://github.com/nathanbuchar/react-hook-thunk-reducer">nathanbachar's</a>
+          <code>useThunkReducer</code> &mdash; highly recommended. Redux and other state
+          management solutions would work fine, too. See
+          <a href="https://github.com/spaceaardvark/react-control-chaos/blob/main/src/components/App.js">components/App.js</a>
+          and <a href="https://github.com/spaceaardvark/react-control-chaos/blob/main/src/reducer.js">reducer.js</a>.
+        </li>
+        <li>Actions that reflect something that happened are named in past tense, and
+          actions that reflect something that should happen are named in the active
+          voice or are thunks (functions). It's important to have a clear conceptual
+          understanding of the difference between the video player saying the volume
+          <em>changed</em> vs. a control <em>setting</em> the volume. See
+          <a href="https://github.com/spaceaardvark/react-control-chaos/blob/main/src/actions.js">actions.js</a>.
+        </li>
+      </ul>
+
       <p><a href="#">Back to top</a></p>
 
       <p>This is an open-source web application. See the 

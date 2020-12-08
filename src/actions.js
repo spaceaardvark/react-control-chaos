@@ -58,3 +58,7 @@ export const setVolume = (level) => () => {
 export const setMuted = (muted) => () => {
   video.setMuted(muted);
 };
+
+export const setPosition = (position) => () => {
+  video.setPosition(position);
+}

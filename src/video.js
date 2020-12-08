@@ -30,3 +30,7 @@ export const setVolume = (level) => {
 export const setMuted = (muted) => {
   videoEl.muted = muted;
 }
+
+export const setPosition = (position) => {
+  videoEl.currentTime = position;
+}

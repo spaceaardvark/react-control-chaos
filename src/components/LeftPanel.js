@@ -1,29 +1,46 @@
-import { setPlaying, setMuted, setVolume } from "../actions";
+import { useMemo } from "preact/hooks";
+
+import { setPlaying, setMuted, setVolume, setPosition } from "../actions";
 import { html } from "../html";
 
 const MED = 0.33;
 const HIGH = 0.66;
 
 export const LeftPanel = ({ state, dispatch }) => {
-  const onPlayingChange = (e) => dispatch(setPlaying(e.target.checked));
-  const onMuted = (e) => dispatch(setMuted(e.target.checked));
 
-  const range1 = state.volume < MED;
-  const range2 = state.volume >= MED && state.volume < HIGH;
-  const range3 = state.volume >= HIGH;
+  const onPositionChange = (e) => {
+    const val = Number(e.target.value);
+    if (!isNaN(val)) {
+      if (val >= 0 && val <= state.duration) {
+        dispatch(setPosition(val));
+      }
+    }
+  };
+
+  const range1 = useMemo(() => state.volume < MED, [state.volume]);
+  const range2 = useMemo(() => state.volume >= MED && state.volume < HIGH, [state.volume]);
+  const range3 = useMemo(() => state.volume >= HIGH, [state.volume]);
 
   return html`
     <div class="panel left">
     
       <div class="form-group">
         <label>
-          <input type="checkbox" checked=${state.playing} onclick=${onPlayingChange} /> Playing
+          <input
+            type="checkbox"
+            checked=${state.playing}
+            onclick=${(e) => dispatch(setPlaying(e.target.checked))}
+          /> Playing
         </label>
       </div>
     
       <div class="form-group">
         <label>
-          <input type="checkbox" checked=${state.muted} onclick=${onMuted} /> Muted
+          <input
+            type="checkbox"
+            checked=${state.muted}
+            onclick=${(e) => dispatch(setMuted(e.target.checked))}
+          /> Muted
         </label>
       </div>
 
@@ -50,6 +67,16 @@ export const LeftPanel = ({ state, dispatch }) => {
             onclick=${() => dispatch(setVolume(1))}
           /> High
         </label>
+      </div>
+
+      <div class="form-group">
+        <label for="position">Position</label>
+        <input
+          id="position"
+          type="text"
+          value=${state.position}
+          onchange=${onPositionChange}
+        />
       </div>
 
     </div>
