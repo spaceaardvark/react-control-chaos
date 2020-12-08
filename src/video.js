@@ -23,9 +23,10 @@ export const pause = () => {
   videoEl.pause();
 };
 
-export const seek = (time) => {
-  let clamped;
+export const setVolume = (level) => {
+  videoEl.volume = level;
+}
 
-  clamped = Math.max(0, Math.min(time, videoEl.duration));
-  videoEl.currentTime = clamped;
-};
+export const setMuted = (muted) => {
+  videoEl.muted = muted;
+}

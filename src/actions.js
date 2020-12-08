@@ -1,3 +1,4 @@
+import { clamp } from "./clamp";
 import * as video from "./video";
 
 // PASSIVE ACTIONS -- THINGS THAT HAVE HAPPENED
@@ -21,10 +22,11 @@ export const videoPaused = () => ({
 });
 
 export const VOLUME_CHANGED = "VOLUME_CHANGED";
-export const volumeChanged = (volume) => ({
+export const volumeChanged = (volume, muted) => ({
   type: VOLUME_CHANGED,
   payload: {
-    volume
+    volume,
+    muted
   },
 });
 
@@ -48,6 +50,11 @@ export const setPlaying = (playing) => (dispatch) => {
   }
 };
 
-export const seek = (time) => () => {
-  video.seek(time);
-}
+export const setVolume = (level) => () => {
+  level = clamp(0, 1, level);
+  video.setVolume(level);
+};
+
+export const setMuted = (muted) => () => {
+  video.setMuted(muted);
+};

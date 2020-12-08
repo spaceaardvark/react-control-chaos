@@ -1,33 +1,25 @@
-import { useEffect, useRef } from "preact/hooks";
-
 import { durationSet, tick, videoPaused, videoStarted, volumeChanged } from "../actions";
 import { html } from "../html";
 import * as video from "../video";
 
 export const VideoPlayer = ({ dispatch }) => {
-  const videoEl = useRef();
-
-  const onLoadedMetadata = () => dispatch(durationSet(videoEl.current.duration));
-  const onPause = () => dispatch(videoPaused());
-  const onPlay = () => dispatch(videoStarted());
-  const onTick = () => dispatch(tick(videoEl.current.currentTime));
-  const onVolumeChange = () => dispatch(volumeChanged(videoEl.current.volume));
-
-  useEffect(() => {
-    if (videoEl) {
-      video.registerVideoElement(videoEl.current);
-      videoEl.current.addEventListener("loadedmetadata", onLoadedMetadata);
-      videoEl.current.addEventListener("pause", onPause);
-      videoEl.current.addEventListener("playing", onPlay);
-      videoEl.current.addEventListener("timeupdate", onTick);
-      videoEl.current.addEventListener("volumechange", onVolumeChange);
-      videoEl.current.addEventListener("waiting", onPause);
-    }
-  }, [videoEl]);
+  const onReady = (videoEl) => {
+    video.registerVideoElement(videoEl);
+    dispatch(durationSet(videoEl.duration));
+    dispatch(volumeChanged(videoEl.volume, videoEl.muted));
+  };
 
   return html`
     <div class="player">
-      <video src="nasa-flares-480p30.m4v" controls ref=${videoEl}></video>
+      <video
+        src="nasa-flares-480p30.m4v" controls
+        onloadeddata=${(e) => onReady(e.target)}
+        onpause=${() => dispatch(videoPaused())}
+        onplaying=${() => dispatch(videoStarted())}
+        ontimeupdate=${(e) => dispatch(tick(e.target.currentTime))}
+        onvolumechange=${(e) => dispatch(volumeChanged(e.target.volume, e.target.muted))}
+        onwaiting=${() => dispatch(videoPaused())}
+      ></video>
     </div>
   `;
 };

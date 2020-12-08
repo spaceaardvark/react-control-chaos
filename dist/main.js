@@ -282,6 +282,10 @@
 	  videoEl.pause();
 	};
 
+	const setMuted = (muted) => {
+	  videoEl.muted = muted;
+	};
+
 	// PASSIVE ACTIONS -- THINGS THAT HAVE HAPPENED
 
 	const DURATION_SET = "DURATION_SET";
@@ -303,10 +307,11 @@
 	});
 
 	const VOLUME_CHANGED = "VOLUME_CHANGED";
-	const volumeChanged = (volume) => ({
+	const volumeChanged = (volume, muted) => ({
 	  type: VOLUME_CHANGED,
 	  payload: {
-	    volume
+	    volume,
+	    muted
 	  },
 	});
 
@@ -330,46 +335,64 @@
 	  }
 	};
 
+	const setMuted$1 = (muted) => () => {
+	  setMuted(muted);
+	};
+
 	const initialState = {
 	  duration: 0,
 	  playing: false,
 	  position: 0,
 	  volume: 0,
+	  muted: false,
 	};
 
 	const reducer = (state, action) => {
 	  console.log("⚡", action.type);
-	  switch (action.type) {
-	    case DURATION_SET:
-	      return { ...state, duration: action.payload.duration };
-	    case TICK:
-	      return { ...state, position: action.payload.position };
-	    case VIDEO_STARTED:
-	      return { ...state, playing: true };
-	    case VIDEO_PAUSED:
-	      return { ...state, playing: false };
-	    case VOLUME_CHANGED:
-	      return { ...state, volume: action.payload.volume };
-	    default:
-	      console.error("Unrecognized action in reducer:", action);
-	      return state;
-	  }
+
+	  const inner = (state, action) => {
+	    switch (action.type) {
+	      case DURATION_SET:
+	        return { ...state, duration: action.payload.duration };
+	      case TICK:
+	        return { ...state, position: action.payload.position };
+	      case VIDEO_STARTED:
+	        return { ...state, playing: true };
+	      case VIDEO_PAUSED:
+	        return { ...state, playing: false };
+	      case VOLUME_CHANGED:
+	        return { ...state, volume: action.payload.volume, muted: action.payload.muted };
+	      default:
+	        console.error("Unrecognized action in reducer:", action);
+	        return state;
+	    }
+	  };
+
+	  const result = inner(state, action);
+	  console.log(result);
+
+	  return result;
 	};
 
 	const LeftPanel = ({ state, dispatch }) => {
-	  const onClick = (e) => dispatch(setPlaying(e.target.checked));
+	  const onPlayingChange = (e) => dispatch(setPlaying(e.target.checked));
+	  const onMuted = (e) => dispatch(setMuted$1(e.target.checked));
 
 	  return html`
     <div class="panel left">
+    
       <div class="form-group">
         <label>
-          <input 
-            type="checkbox"
-            checked=${state.playing}
-            onclick=${onClick}
-          /> Playing
+          <input type="checkbox" checked=${state.playing} onclick=${onPlayingChange} /> Playing
         </label>
       </div>
+    
+      <div class="form-group">
+        <label>
+          <input type="checkbox" checked=${state.muted} onclick=${onMuted} /> Muted
+        </label>
+      </div>
+
     </div>
   `;
 	};
@@ -411,29 +434,23 @@
 	};
 
 	const VideoPlayer = ({ dispatch }) => {
-	  const videoEl = s$1();
-
-	  const onLoadedMetadata = () => dispatch(durationSet(videoEl.current.duration));
-	  const onPause = () => dispatch(videoPaused());
-	  const onPlay = () => dispatch(videoStarted());
-	  const onTick = () => dispatch(tick(videoEl.current.currentTime));
-	  const onVolumeChange = () => dispatch(volumeChanged(videoEl.current.volume));
-
-	  y$1(() => {
-	    if (videoEl) {
-	      registerVideoElement(videoEl.current);
-	      videoEl.current.addEventListener("loadedmetadata", onLoadedMetadata);
-	      videoEl.current.addEventListener("pause", onPause);
-	      videoEl.current.addEventListener("playing", onPlay);
-	      videoEl.current.addEventListener("timeupdate", onTick);
-	      videoEl.current.addEventListener("volumechange", onVolumeChange);
-	      videoEl.current.addEventListener("waiting", onPause);
-	    }
-	  }, [videoEl]);
+	  const onReady = (videoEl) => {
+	    registerVideoElement(videoEl);
+	    dispatch(durationSet(videoEl.duration));
+	    dispatch(volumeChanged(videoEl.volume, videoEl.muted));
+	  };
 
 	  return html`
     <div class="player">
-      <video src="nasa-flares-480p30.m4v" controls ref=${videoEl}></video>
+      <video
+        src="nasa-flares-480p30.m4v" controls
+        onloadeddata=${(e) => onReady(e.target)}
+        onpause=${() => dispatch(videoPaused())}
+        onplaying=${() => dispatch(videoStarted())}
+        ontimeupdate=${(e) => dispatch(tick(e.target.currentTime))}
+        onvolumechange=${(e) => dispatch(volumeChanged(e.target.volume, e.target.muted))}
+        onwaiting=${() => dispatch(videoPaused())}
+      ></video>
     </div>
   `;
 	};
