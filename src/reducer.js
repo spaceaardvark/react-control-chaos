@@ -10,6 +10,7 @@ export const initialState = {
 };
 
 export const reducer = (state, action) => {
+  console.log("⚡", action.type);
   switch (action.type) {
     case DURATION_SET:
       return { ...state, duration: action.payload.duration };

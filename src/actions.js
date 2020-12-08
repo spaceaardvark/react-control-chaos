@@ -1,3 +1,5 @@
+import * as video from "./video";
+
 // PASSIVE ACTIONS -- THINGS THAT HAVE HAPPENED
 
 export const DURATION_SET = "DURATION_SET";
@@ -36,10 +38,16 @@ export const tick = (position) => ({
 
 // ACTIVE ACTIONS -- THINGS THAT NEED TO HAPPEN
 
-export const SET_PLAYING = "SET_PLAYING";
-export const setPlaying = (playing) => ({
-  type: SET_PLAYING,
-  payload: {
-    playing
+export const setPlaying = (playing) => (dispatch) => {
+  if (playing) {
+    video.play();
+    // play() is a request, so we do not change the state
+  } else {
+    video.pause();
+    dispatch(videoPaused());
   }
-});
+};
+
+export const seek = (time) => () => {
+  video.seek(time);
+}

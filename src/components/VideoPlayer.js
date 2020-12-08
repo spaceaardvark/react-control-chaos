@@ -2,6 +2,7 @@ import { useEffect, useRef } from "preact/hooks";
 
 import { durationSet, tick, videoPaused, videoStarted, volumeChanged } from "../actions";
 import { html } from "../html";
+import * as video from "../video";
 
 export const VideoPlayer = ({ dispatch }) => {
   const videoEl = useRef();
@@ -14,7 +15,7 @@ export const VideoPlayer = ({ dispatch }) => {
 
   useEffect(() => {
     if (videoEl) {
-      console.log("Adding event listeners to <video> element.");
+      video.registerVideoElement(videoEl.current);
       videoEl.current.addEventListener("loadedmetadata", onLoadedMetadata);
       videoEl.current.addEventListener("pause", onPause);
       videoEl.current.addEventListener("playing", onPlay);

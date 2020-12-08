@@ -10,7 +10,7 @@ export const LeftPanel = ({ state, dispatch }) => {
         <label>
           <input 
             type="checkbox"
-            checked=${state.playing ? "checked" : null}
+            checked=${state.playing}
             onclick=${onClick}
           /> Playing
         </label>

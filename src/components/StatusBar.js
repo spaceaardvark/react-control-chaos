@@ -11,7 +11,7 @@ export const StatusBar = ({ state }) => {
     msgClass = "info";
   }
 
-  seconds = Math.floor(state.position);
+  seconds = Math.round(state.position * 10 * (1 + Number.EPSILON)) / 10;
 
   return html`
     <div class="status">
