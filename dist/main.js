@@ -257,6 +257,9 @@
 
 	const html = htm.bind(v);
 
+	const clamp = (start, end, val) =>
+	  Math.max(start, Math.min(end, val));
+
 	/**
 	 * This is a simple HTML5 video player API designed to be similar to the HTML5 fetch
 	 * API. It prevents the VideoPlayer React Component from having to do too much and
@@ -280,6 +283,10 @@
 
 	const pause = () => {
 	  videoEl.pause();
+	};
+
+	const setVolume = (level) => {
+	  videoEl.volume = level;
 	};
 
 	const setMuted = (muted) => {
@@ -335,6 +342,11 @@
 	  }
 	};
 
+	const setVolume$1 = (level) => () => {
+	  level = clamp(0, 1, level);
+	  setVolume(level);
+	};
+
 	const setMuted$1 = (muted) => () => {
 	  setMuted(muted);
 	};
@@ -374,9 +386,16 @@
 	  return result;
 	};
 
+	const MED = 0.33;
+	const HIGH = 0.66;
+
 	const LeftPanel = ({ state, dispatch }) => {
 	  const onPlayingChange = (e) => dispatch(setPlaying(e.target.checked));
 	  const onMuted = (e) => dispatch(setMuted$1(e.target.checked));
+
+	  const range1 = state.volume < MED;
+	  const range2 = state.volume >= MED && state.volume < HIGH;
+	  const range3 = state.volume >= HIGH;
 
 	  return html`
     <div class="panel left">
@@ -390,6 +409,31 @@
       <div class="form-group">
         <label>
           <input type="checkbox" checked=${state.muted} onclick=${onMuted} /> Muted
+        </label>
+      </div>
+
+      <div class="form-group">
+        <label>Volume</label><br/>
+        <label>
+          <input
+            type="radio" name="volume" value="low"
+            checked=${range1}
+            onclick=${() => dispatch(setVolume$1(0.3))}
+          /> Low
+        </label><br/>
+        <label>
+          <input
+            type="radio" name="volume" value="medium"
+            checked=${range2}
+            onclick=${() => dispatch(setVolume$1(0.6))}
+          /> Medium
+        </label><br/>
+        <label>
+          <input
+            type="radio" name="volume" value="high"
+            checked=${range3}
+            onclick=${() => dispatch(setVolume$1(1))}
+          /> High
         </label>
       </div>
 
