@@ -474,17 +474,32 @@
   `;
 	};
 
+	const debounce = (fn, ms) => {
+	  let handle;
+
+	  return (...args) => {
+	    let context, later;
+
+	    context = undefined;
+	    later = () => {
+	      handle = null;
+	      fn.apply(context, args);
+	    };
+
+	    window.clearTimeout(handle);
+	    handle = window.setTimeout(later, ms);
+	  };
+	};
+
 	const RightPanel = ({ state, dispatch }) => {
 
 	  const onPlayingChange = (e) => dispatch(setPlaying(e.target.value === "playing"));
-	  const onVolumeChange = (e) => {
+	  const onVolumeChange = debounce((e) => {
 	    const val = Number(e.target.value);
-	    if (!isNaN(val)) {
-	      if (val >= 0 && val <= 1) {
-	        dispatch(setVolume$1());
-	      }
+	    if (!isNaN(val) && val >= 0 && val <= 1) {
+	      dispatch(setVolume$1(val));
 	    }
-	  };
+	  }, 500);
 
 	  const p25 = d$1(() => Math.floor(state.duration / 4), [state.duration]);
 	  const p50 = d$1(() => Math.floor(state.duration / 2), [state.duration]);

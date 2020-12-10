@@ -1,18 +1,17 @@
 import { useMemo } from "preact/hooks";
 import { setPlaying, setVolume, setPosition } from "../actions";
+import { debounce } from "../debounce";
 import { html } from "../html";
 
 export const RightPanel = ({ state, dispatch }) => {
 
   const onPlayingChange = (e) => dispatch(setPlaying(e.target.value === "playing"));
-  const onVolumeChange = (e) => {
+  const onVolumeChange = debounce((e) => {
     const val = Number(e.target.value);
-    if (!isNaN(val)) {
-      if (val >= 0 && val <= 1) {
-        dispatch(setVolume());
-      }
+    if (!isNaN(val) && val >= 0 && val <= 1) {
+      dispatch(setVolume(val));
     }
-  };
+  }, 500);
 
   const p25 = useMemo(() => Math.floor(state.duration / 4), [state.duration]);
   const p50 = useMemo(() => Math.floor(state.duration / 2), [state.duration]);
